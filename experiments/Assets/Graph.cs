@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
-public class Graph : MonoBehaviour 
-{   
+public class Graph : MonoBehaviour
+{
 	public Transform pointPrefab;
 
-	[Range(10, 100)]
+	[Range( 10, 100 )]
 	public int resolution = 10;
 
 	Transform[] points;
 
-	void Awake() 
+	void Awake()
 	{
 		float step = 2f / resolution;
 
@@ -17,27 +17,42 @@ public class Graph : MonoBehaviour
 
 		Vector3 position = Vector3.zero;
 
-		points = new Transform[resolution];
+		points = new Transform[ resolution ];
 
-		for (int i = 0; i < points.Length; i++) 
+		for( int i = 0; i < points.Length; i++ )
 		{
-			Transform point = Instantiate(pointPrefab);
-			position.x = (i + 0.5f) * step - 1f;
+			Transform point = Instantiate( pointPrefab );
+			position.x = ( i + 0.5f ) * step - 1f;
 			point.localPosition = position;
 			point.localScale = scale;
-			point.SetParent(transform, false);
-			points[i] = point;
+			point.SetParent( transform, false );
+			points[ i ] = point;
 		}
 	}
 
-	void Update() 
+	void Update()
 	{
-		for (int i = 0; i < points.Length; i++) 
+		float time = Time.time;
+
+		for( int i = 0; i < points.Length; i++ )
 		{
-			Transform point = points[i];
+			Transform point = points[ i ];
 			Vector3 position = point.localPosition;
-			position.y = Mathf.Sin(Mathf.PI * (position.x + Time.time));
+			position.y = MultiSineFunction( position.x, time );
 			point.localPosition = position;
 		}
+	}
+
+	float SineFunction( float x, float t )
+	{
+		return Mathf.Sin( Mathf.PI * ( x + t ) );
+	}
+
+	float MultiSineFunction( float x, float t )
+	{
+		float y = Mathf.Sin( Mathf.PI * ( x + t ) );
+		y += Mathf.Sin( 2f * Mathf.PI * ( x + t ) ) / 2f;
+		y *= 2f / 3f;
+		return y;
 	}
 }
